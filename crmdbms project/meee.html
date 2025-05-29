@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CRM Analytics Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-6 font-sans">
+
+  <h1 class="text-3xl font-bold mb-6 text-center">CRM Analytics Dashboard</h1>
+
+  <!-- Summary Cards -->
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+    <div class="bg-white p-4 rounded shadow text-center">
+      <h2 class="text-xl font-semibold">Total Customers</h2>
+      <p id="totalCustomers" class="text-2xl text-blue-600">0</p>
+    </div>
+    <div class="bg-white p-4 rounded shadow text-center">
+      <h2 class="text-xl font-semibold">Total Sales</h2>
+      <p id="totalSales" class="text-2xl text-green-600">$0</p>
+    </div>
+    <div class="bg-white p-4 rounded shadow text-center">
+      <h2 class="text-xl font-semibold">Open Tickets</h2>
+      <p id="openTickets" class="text-2xl text-red-600">0</p>
+    </div>
+  </div>
+
+  <!-- Charts -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+    <div class="bg-white p-4 rounded shadow">
+      <h2 class="text-lg font-semibold mb-2">Sales Over Time</h2>
+      <canvas id="salesChart"></canvas>
+    </div>
+    <div class="bg-white p-4 rounded shadow">
+      <h2 class="text-lg font-semibold mb-2">Customer Segments</h2>
+      <canvas id="segmentChart"></canvas>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="bg-white p-4 rounded shadow">
+    <h2 class="text-lg font-semibold mb-2">Recent Interactions</h2>
+    <table class="w-full text-left table-auto border-collapse">
+      <thead>
+        <tr>
+          <th class="border-b p-2">Name</th>
+          <th class="border-b p-2">Date</th>
+          <th class="border-b p-2">Interaction</th>
+        </tr>
+      </thead>
+      <tbody id="interactionTable"></tbody>
+    </table>
+  </div>
+
+  <script>
+    // Dummy data
+    const data = {
+      totalCustomers: 240,
+      totalSales: 58000,
+      openTickets: 12,
+      salesOverTime: {
+        labels: ["Jan", "Feb", "Mar", "Apr", "May"],
+        data: [8000, 12000, 10000, 14000, 14000]
+      },
+      segments: {
+        labels: ["Retail", "Enterprise", "SMB"],
+        data: [50, 30, 20]
+      },
+      interactions: [
+        { name: "Alice Smith", date: "2025-05-01", message: "Requested a demo" },
+        { name: "John Doe", date: "2025-05-05", message: "Opened a ticket" },
+        { name: "Emma Johnson", date: "2025-05-10", message: "Asked for pricing" }
+      ]
+    };
+
+    // Populate summary
+    document.getElementById("totalCustomers").textContent = data.totalCustomers;
+    document.getElementById("totalSales").textContent = `$${data.totalSales}`;
+    document.getElementById("openTickets").textContent = data.openTickets;
+
+    // Sales Chart
+    new Chart(document.getElementById("salesChart"), {
+      type: "line",
+      data: {
+        labels: data.salesOverTime.labels,
+        datasets: [{
+          label: "Sales ($)",
+          data: data.salesOverTime.data,
+          borderColor: "rgba(34,197,94,1)",
+          fill: false,
+          tension: 0.3
+        }]
+      }
+    });
+
+    // Segment Chart
+    new Chart(document.getElementById("segmentChart"), {
+      type: "pie",
+      data: {
+        labels: data.segments.labels,
+        datasets: [{
+          data: data.segments.data,
+          backgroundColor: ["#3b82f6", "#10b981", "#f59e0b"]
+        }]
+      }
+    });
+
+    // Table
+    const table = document.getElementById("interactionTable");
+    data.interactions.forEach(row => {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td class="p-2 border-b">${row.name}</td>
+        <td class="p-2 border-b">${row.date}</td>
+        <td class="p-2 border-b">${row.message}</td>
+      `;
+      table.appendChild(tr);
+    });
+  </script>
+</body>
+</html>

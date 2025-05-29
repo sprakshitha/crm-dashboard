@@ -1,0 +1,14 @@
+<?php
+include 'config.php';
+
+$sql = "SELECT created_at, SUM(purchase_amount) AS total FROM customers GROUP BY created_at";
+$result = $conn->query($sql);
+
+$data = [];
+
+while($row = $result->fetch_assoc()) {
+    $data[] = $row;
+}
+
+echo json_encode($data);
+?>

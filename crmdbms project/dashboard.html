@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>CRM Analytics Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body { font-family: Arial; padding: 20px; }
+    .card { padding: 10px; margin: 10px; border: 1px solid #ddd; display: inline-block; width: 30%; }
+    canvas { margin-top: 20px; }
+  </style>
+</head>
+<body>
+  <h1>CRM Analytics Dashboard</h1>
+  <div class="card"><strong>Total Customers:</strong> <span id="customers"></span></div>
+  <div class="card"><strong>Total Interactions:</strong> <span id="interactions"></span></div>
+  <div class="card"><strong>Total Sales:</strong> $<span id="sales"></span></div>
+
+  <canvas id="salesChart" width="600" height="300"></canvas>
+
+  <script>
+    fetch('/api/analytics')
+      .then(response => response.json())
+      .then(data => {
+        document.getElementById("customers").textContent = data.customer_count;
+        document.getElementById("interactions").textContent = data.interaction_count;
+        document.getElementById("sales").textContent = data.total_sales;
+
+        const labels = data.sales_over_time.map(row => row.date);
+        const values = data.sales_over_time.map(row => row.daily_total);
+
+        new Chart(document.getElementById("salesChart"), {
+          type: 'line',
+          data: {
+            labels: labels,
+            datasets: [{
+              label: 'Sales Over Time',
+              data: values,
+              fill: false,
+              borderColor: 'blue',
+              tension: 0.1
+            }]
+          }
+        });
+      });
+  </script>
+</body>
+</html>
